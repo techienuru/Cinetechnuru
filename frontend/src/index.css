@@ -1,0 +1,109 @@
+@import "tailwindcss";
+/* @import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:opsz,wght@10..72,100..900&display=swap"); */
+
+@keyframes fadeZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@theme {
+  --color-bgColor: #0d0630;
+  --color-primary: #028090;
+  --color-secondary: #f1faee;
+  --color-tertiary: #f34213;
+
+  --font-google-font-1: "Big Shoulders Stencil", sans-serif;
+  --font-google-font-2: "Quintessential", serif;
+}
+
+@layer components {
+  .btnGradient {
+    background: linear-gradient(
+      to right top,
+      #028090,
+      #006984,
+      #005276,
+      #003c64,
+      #00264f,
+      #002953,
+      #002d58,
+      #00305c,
+      #004e77,
+      #006b84,
+      #008880,
+      #32a272
+    );
+  }
+
+  .btnGradient2 {
+    background-image: linear-gradient(
+      to right top,
+      #028090,
+      #00877a,
+      #358a53,
+      #6c8727,
+      #cd8617,
+      #e48a24,
+      #daaf50,
+      #d5cd84,
+      #f1faee
+    );
+  }
+
+  .btnGradient3 {
+    background: linear-gradient(
+      to right top,
+      #028090,
+      #006984,
+      #003c64,
+      #003c64,
+      #00264f,
+      #002953,
+      #002d58,
+      #00305c,
+      #004e77,
+      #006b84,
+      #008880,
+      #32a272
+    );
+  }
+
+  .bodyGradient {
+    background: linear-gradient(135deg, #03a9f3, #e8e9ef);
+  }
+  .clipText {
+    background: linear-gradient(90deg, #03a9f3, #e8e9ef);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .filterBtn {
+    @apply rounded-md px-3 py-2 hover:bg-primary;
+  }
+  .animatePreLoader {
+    animation: fadeZoom 1.5s ease-in-out infinite;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: var(--color-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-secondary);
+  border-radius: 10px;
+}
+
+body {
+  @apply px-5 py-3 bg-bgColor text-secondary font-google-font-1;
+}
