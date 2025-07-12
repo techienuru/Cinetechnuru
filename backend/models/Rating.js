@@ -7,6 +7,14 @@ const ratingSchema = new Schema({
     type: String,
     required: true,
   },
+  movieId: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: String,
+    required: true,
+  },
 });
 
 export default mongoose.model("ratings", ratingSchema);

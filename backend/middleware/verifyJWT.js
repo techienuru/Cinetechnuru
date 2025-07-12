@@ -13,7 +13,7 @@ const verifyJWT = (req, res, next) => {
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ error: "token has expired." });
 
-    req.user = decoded.email;
+    req.email = decoded.email;
 
     next();
   });

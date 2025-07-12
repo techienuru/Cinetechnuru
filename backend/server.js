@@ -8,6 +8,9 @@ import errorHandler from "./middleware/errorHandler.js";
 import verifyJWT from "./middleware/verifyJWT.js";
 import refreshRouter from "./routes/refreshToken.js";
 import logoutRouter from "./routes/logout.js";
+import moviesRouter from "./routes/api/movies.js";
+import profileRouter from "./routes/manageProfile.js";
+import userRouter from "./routes/api/user.js";
 
 const app = express();
 const PORT = 3500;
@@ -21,11 +24,15 @@ app.use(cookieParser());
 
 app.use("/register", registerRouter);
 app.use("/auth", authRouter);
-app.use("/logout", logoutRouter);
+app.use("/refresh", refreshRouter);
+
+app.use("/api/movies", moviesRouter);
 
 app.use(verifyJWT);
 
-app.use("/refresh", refreshRouter);
+app.use("/logout", logoutRouter);
+app.use("/manage-profile", profileRouter);
+app.use("/user", userRouter);
 
 // Not found page
 app.use((req, res) => {

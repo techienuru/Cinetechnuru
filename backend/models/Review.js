@@ -7,4 +7,14 @@ const reviewSchema = new Schema({
     type: String,
     required: true,
   },
+  movieId: {
+    type: String,
+    required: true,
+  },
+  review: {
+    type: String,
+    required: true,
+  },
 });
+
+export default mongoose.model("reviews", reviewSchema);

@@ -7,6 +7,10 @@ const watchlistSchema = new Schema({
     type: String,
     required: true,
   },
+  movieId: {
+    type: String,
+    required: true,
+  },
 });
 
-export default mongoose.model("watchlists",watchlistSchema);
+export default mongoose.model("watchlists", watchlistSchema);

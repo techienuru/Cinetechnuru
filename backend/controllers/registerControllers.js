@@ -3,12 +3,17 @@ import bcrypt from "bcrypt";
 import User from "../models/User.js";
 
 export const handleNewUser = async (req, res, next) => {
-  if (!req?.body?.username || !req?.body?.email || !req?.body?.password)
+  if (
+    !req?.body?.fullname ||
+    !req?.body?.username ||
+    !req?.body?.email ||
+    !req?.body?.password
+  )
     return res
       .status(400)
       .json({ error: "Username, email, and password are required." });
 
-  const { username, email, password } = req?.body;
+  const { fullname, username, email, password } = req?.body;
 
   try {
     const duplicate = await User.findOne({ email: email }).exec();
@@ -18,6 +23,7 @@ export const handleNewUser = async (req, res, next) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     const result = await User.create({
+      fullname,
       username,
       email,
       password: hashPassword,
