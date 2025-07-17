@@ -1,20 +1,27 @@
 import { Link } from "react-router-dom";
 
-const MovieCard = () => {
+const MovieCard = ({ movieData }) => {
+  const { id, poster_path, release_date, title } = movieData;
+
   return (
     <>
-      <div className="max-[370px]:flex-4/5 flex-1/3 sm:flex-1/5 outline outline-primary cursor-pointer hover:scale-103 hover:shadow hover:shadow-tertiary transition-all">
-        <Link to="/movie-details/123">
-          <div>
+      <div className="w-[100%] sm:w-[48%] md:w-[31%] xl:w-[23.5%] h-[400px] outline outline-primary cursor-pointer hover:scale-103 hover:shadow hover:shadow-tertiary transition-all">
+        <Link to={`/movie-details/${id}`}>
+          <div className="h-[80%]">
             <img
-              src="../../../public/favicon.webp"
-              className="w-full object-cover"
+              src={
+                poster_path
+                  ? `https://image.tmdb.org/t/p/original${poster_path}`
+                  : "../../../favicon.webp"
+              }
+              className="h-full w-full object-cover"
               alt="Movie Image"
+              loading="lazy"
             />
           </div>
-          <div className="card-body bg-primary text-center p-4 font-bold">
-            <p className="text-black">The Old Guard 2</p>
-            <p>Release: 2025-07-11</p>
+          <div className="h-[20%] card-body bg-primary text-center p-4 font-bold">
+            <p className="text-black">{title}</p>
+            <p>Release: {release_date}</p>
           </div>
         </Link>
       </div>

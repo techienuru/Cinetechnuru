@@ -3,6 +3,6 @@ import refreshJWT from "../controllers/refreshTokenControllers.js";
 
 const refreshRouter = express.Router();
 
-refreshRouter.post("/", refreshJWT);
+refreshRouter.get("/", refreshJWT);
 
 export default refreshRouter;

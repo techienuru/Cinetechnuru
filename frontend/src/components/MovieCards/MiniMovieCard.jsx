@@ -6,7 +6,7 @@ const MiniMovieCard = () => {
       <div className="card-header">
         <Link to="/movie-details/:123">
           <img
-            src="../../../public/favicon.webp"
+            src="../../../favicon.webp"
             alt="Movie Image"
             className="object-cover w-full"
             loading="lazy"

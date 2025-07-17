@@ -15,10 +15,10 @@ moviesRouter.get("/popular", getPopularMovies);
 
 moviesRouter.get("/newest", getNewestMovies);
 
-moviesRouter.get("/top_rated", getTopRatedMovies);
+moviesRouter.get("/most-rated", getTopRatedMovies);
 
-moviesRouter.post("/:id", getMovieDetails);
+moviesRouter.get("/:id", getMovieDetails);
 
-moviesRouter.post("/search/:query", handleSearchMovie);
+moviesRouter.get("/search/:query", handleSearchMovie);
 
 export default moviesRouter;

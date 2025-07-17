@@ -8,10 +8,13 @@ import {
   FaUser,
   FaUserCircle,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Navbar = () => {
   const [openSearch, setOpenSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
 
   return (
     <>
@@ -101,14 +104,18 @@ const Navbar = () => {
             className="p-3 w-full"
             onSubmit={(e) => {
               e.preventDefault();
+              navigate(`/search/${searchTerm}`);
+              setOpenSearch(false);
             }}
           >
             <div className="flex w-full">
               <input
                 type="text"
                 autoFocus
-                placeholder="Search For Movies by name, title, genre, or year"
+                placeholder="Search For Movies by name"
                 className="w-[70%] border border-secondary px-1 focus:outline-none focus:shadow-md focus:shadow-primary"
+                required
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
                 type="submit"

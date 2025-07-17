@@ -1,6 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import cors from "cors";
+
 import registerRouter from "./routes/register.js";
 import connectDB from "./config/dbConn.js";
 import authRouter from "./routes/auth.js";
@@ -17,6 +19,13 @@ const PORT = 3500;
 
 connectDB();
 
+// Specifies Allowed URL to communicate to endpoint
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 // Parses JSON into request body
 app.use(express.json());
 // Parses cookies into request cookies

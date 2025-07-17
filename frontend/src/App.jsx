@@ -20,7 +20,7 @@ function App() {
         </header>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/movie-details/:id" element={<MovieDetails />} />
+          <Route path="/movie-details/:movieId" element={<MovieDetails />} />
           <Route path="/watch-later" element={<WatchLater />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/auth/login" element={<Login />} />

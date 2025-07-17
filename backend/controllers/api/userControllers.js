@@ -117,7 +117,7 @@ export const handleWatchlist = async (req, res, next) => {
     } else {
       const result = await Watchlist.deleteOne({ userId, movieId }).exec();
 
-      res.json({ message: "Movie deleted from Favorites", result });
+      res.json({ message: "Movie deleted from Watchlist", result });
     }
   } catch (err) {
     next(err);
@@ -152,7 +152,7 @@ export const addReview = async (req, res, next) => {
 
     const result = await Review.create({ userId, movieId, review });
 
-    res.status(201).json({ message: "Review added to successfully", result });
+    res.status(201).json({ message: "Review added successfully", result });
   } catch (err) {
     next(err);
   }

@@ -1,15 +1,40 @@
 import { useState } from "react";
 import MovieCard from "../../components/MovieCards/MovieCard";
 import GradientButton from "../../components/Buttons/GradientButton/GradientButton";
-import MaxiPreLoader from "../../components/Preloader/MaxiPreLoader";
-import MiniPreLoader from "../../components/Preloader/MiniPreLoader";
+import MaxiPreLoader from "../../components/Preloaders/MaxiPreLoader";
+import MiniPreLoader from "../../components/Preloaders/MiniPreLoader";
+import { useEffect } from "react";
+import { baseUrl } from "../../config";
+import MovieFilter from "../../components/MovieFilter/MovieFilter";
+import MiniErrorCard from "../../components/ErrorCards/MiniErrorCard";
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("popular");
+  const [moviesDatas, setMoviesDatas] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${baseUrl}/api/movies/${activeFilter}`);
+        const data = await res.json();
+
+        setMoviesDatas(data?.result?.results);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, [activeFilter]);
 
   return (
     <>
-      {/* <MaxiPreLoader /> */}
       <main className="mt-20">
         <section className="hero-section text-center py-8 mb-25">
           <h1 className="font-bold text-2xl/11 sm:text-4xl/loose">
@@ -37,46 +62,23 @@ const Home = () => {
               Popular Shows
             </h2>
             <p className="text-xl sm:text-2xl mb-7">Online Streaming</p>
-            <div className="movies-filter border border-tertiary rounded-full p-3 flex gap-x-3">
-              <button
-                className={`filterBtn ${
-                  activeFilter === "popular" ? "btnGradient" : ""
-                }`}
-                onClick={() => {
-                  setActiveFilter("popular");
-                }}
-              >
-                Popular
-              </button>
-              <button
-                className={`filterBtn ${
-                  activeFilter === "newest" ? "btnGradient" : ""
-                }`}
-                onClick={() => {
-                  setActiveFilter("newest");
-                }}
-              >
-                Newest
-              </button>
-              <button
-                className={`filterBtn ${
-                  activeFilter === "most-rated" ? "btnGradient" : ""
-                }`}
-                onClick={() => {
-                  setActiveFilter("most-rated");
-                }}
-              >
-                Most Rated
-              </button>
+            <MovieFilter
+              activeFilter={activeFilter}
+              setActiveFilter={setActiveFilter}
+            />
+          </div>
+          {isLoading ? (
+            <MiniPreLoader />
+          ) : error ? (
+            <MiniErrorCard errorMessage={error} />
+          ) : (
+            <div className="flex gap-5 flex-wrap my-5 relative">
+              {moviesDatas &&
+                moviesDatas.map((movieData) => (
+                  <MovieCard movieData={movieData} key={movieData.id} />
+                ))}
             </div>
-          </div>
-          {/* <MiniPreLoader /> */}
-          <div className="flex gap-5 flex-wrap my-5 relative">
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-            <MovieCard />
-          </div>
+          )}
         </section>
       </main>
     </>

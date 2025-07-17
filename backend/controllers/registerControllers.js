@@ -7,15 +7,19 @@ export const handleNewUser = async (req, res, next) => {
     !req?.body?.fullname ||
     !req?.body?.username ||
     !req?.body?.email ||
-    !req?.body?.password
+    !req?.body?.password ||
+    !req?.body?.cPassword
   )
-    return res
-      .status(400)
-      .json({ error: "Username, email, and password are required." });
+    return res.status(400).json({
+      error: "fullname,username, email, password, and cPassword are required.",
+    });
 
-  const { fullname, username, email, password } = req?.body;
+  const { fullname, username, email, password, cPassword } = req?.body;
 
   try {
+    if (password !== cPassword)
+      return res.status(400).json({ error: "Password Mismatch!" });
+
     const duplicate = await User.findOne({ email: email }).exec();
     if (duplicate)
       return res.status(400).json({ error: "User already exist." });

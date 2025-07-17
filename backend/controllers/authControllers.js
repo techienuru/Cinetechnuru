@@ -21,7 +21,7 @@ export const handleLogin = async (req, res, next) => {
     const pwdCorrect = await bcrypt.compare(password, foundUser.password);
 
     if (!pwdCorrect)
-      return res.status(401).json({ error: "incorrect password" });
+      return res.status(401).json({ error: "Incorrect password" });
 
     const accessToken = jwt.sign({ email }, ACCESS_TOKEN_SECRET, {
       expiresIn: "30m",
@@ -37,7 +37,9 @@ export const handleLogin = async (req, res, next) => {
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-    }); // In production / when deploying, set "secure:true" && sameSite:"None"
+      secure: false,
+      sameSite: "Lax",
+    }); // In production or when deploying, set "secure:true" && sameSite:"None" Else "secure:false" && sameSite:"Lax"
 
     res.json({ message: "Success", accessToken });
   } catch (err) {
