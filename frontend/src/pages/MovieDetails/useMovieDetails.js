@@ -6,6 +6,8 @@ import { baseUrl } from "../../config";
 import Notification from "../../components/Notification/Notification";
 import useCollectToken from "../../Hooks/useCollectToken";
 import useShowNotification from "../../Hooks/useShowNotification";
+import handleApiResponse from "../../util/handleApiResponse";
+import { saveRecommendations } from "../../util/handleRecommendations";
 
 const useMovieDetails = () => {
   const [showReviewBox, setShowReviewBox] = useState(false);
@@ -13,7 +15,7 @@ const useMovieDetails = () => {
   const [remoteRating, setRemoteRating] = useState(0);
   const [review, setReview] = useState("");
 
-  const [movieData, setMovieData] = useState(false);
+  const [movieData, setMovieData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isRating, setIsRating] = useState(false);
@@ -23,8 +25,7 @@ const useMovieDetails = () => {
   const { showNotification, setShowNotification } = useShowNotification();
 
   const { movieId } = useParams();
-  const { accessToken, saveAccessToken, refreshAccessToken } =
-    useCollectToken();
+  const { accessToken, refreshAccessToken } = useCollectToken();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,21 +58,20 @@ const useMovieDetails = () => {
             authorization: `Bearer ${accessToken}`,
           },
         });
-        const data = await res.json();
+        const { error, isTokenExpired, result } = await res.json();
+        const apiResult = handleApiResponse(res, error, isTokenExpired);
 
         // If Access Token has expired
-        if (data?.error && data?.error === "token has expired.") {
+        if (apiResult.retry) {
           const tokenValid = await refreshAccessToken();
-          // If Refresh Token has not expired
-          if (tokenValid.isValid) {
-            return fetchRating();
-          } else {
-            throw new Error(tokenValid.message);
-          }
+          // If Refresh Token has  expired
+          if (!tokenValid.isValid) throw new Error(tokenValid.message);
+
+          return;
         }
 
-        setRemoteRating(data?.result?.rating || 0);
-        setRating(data?.result?.rating || 0);
+        setRemoteRating(result?.rating || 0);
+        setRating(result?.rating || 0);
       } catch (err) {
         setShowNotification({ message: err.message, type: "error" });
       }
@@ -96,16 +96,19 @@ const useMovieDetails = () => {
           movieId,
         }),
       });
-      const data = await res.json();
-      if (data?.error && data?.error === "token has expired.") {
+      const { error, isTokenExpired, message } = await res.json();
+      const apiResult = handleApiResponse(res, error, isTokenExpired);
+
+      // If Access Token has expired
+      if (apiResult.retry) {
         const tokenValid = await refreshAccessToken();
-        if (tokenValid.isValid) {
-          return addToFavorite();
-        } else {
-          throw new Error(tokenValid.message);
-        }
+        // If Refresh Token has  expired
+        if (!tokenValid.isValid) throw new Error(tokenValid.message);
+
+        return;
       }
-      setShowNotification({ message: data.message, type: "success" });
+
+      setShowNotification({ message, type: "success" });
     } catch (err) {
       setShowNotification({ message: err.message, type: "error" });
     } finally {
@@ -126,17 +129,19 @@ const useMovieDetails = () => {
           movieId,
         }),
       });
-      const data = await res.json();
+      const { error, isTokenExpired, message } = await res.json();
+      const apiResult = handleApiResponse(res, error, isTokenExpired);
+
       // If Access Token has expired
-      if (data?.error && data?.error === "token has expired.") {
+      if (apiResult.retry) {
         const tokenValid = await refreshAccessToken();
-        if (tokenValid.isValid) {
-          return addToWatchList();
-        } else {
-          throw new Error(tokenValid.message);
-        }
+        // If Refresh Token has  expired
+        if (!tokenValid.isValid) throw new Error(tokenValid.message);
+
+        return;
       }
-      setShowNotification({ message: data.message, type: "success" });
+
+      setShowNotification({ message, type: "success" });
     } catch (err) {
       setShowNotification({ message: err.message, type: "error" });
     } finally {
@@ -159,17 +164,19 @@ const useMovieDetails = () => {
           review,
         }),
       });
-      const data = await res.json();
+      const { error, isTokenExpired, message } = await res.json();
+      const apiResult = handleApiResponse(res, error, isTokenExpired);
+
       // If Access Token has expired
-      if (data?.error && data?.error === "token has expired.") {
+      if (apiResult.retry) {
         const tokenValid = await refreshAccessToken();
-        if (tokenValid.isValid) {
-          return addToWatchList();
-        } else {
-          throw new Error(tokenValid.message);
-        }
+        // If Refresh Token has  expired
+        if (!tokenValid.isValid) throw new Error(tokenValid.message);
+
+        return;
       }
-      setShowNotification({ message: data.message, type: "success" });
+
+      setShowNotification({ message, type: "success" });
     } catch (err) {
       setShowNotification({ message: err.message, type: "error" });
     } finally {
@@ -191,19 +198,21 @@ const useMovieDetails = () => {
           rating,
         }),
       });
-      const data = await res.json();
-      if (res.status === 400) throw new Error("Bad Request.");
+      const { error, isTokenExpired, message } = await res.json();
+      const apiResult = handleApiResponse(res, error, isTokenExpired);
 
       // If Access Token has expired
-      if (data?.error && data?.error === "token has expired.") {
+      if (apiResult.retry) {
         const tokenValid = await refreshAccessToken();
-        if (tokenValid.isValid) {
-          return addRating();
-        } else {
-          throw new Error(tokenValid.message);
-        }
+        // If Refresh Token has  expired
+        if (!tokenValid.isValid) throw new Error(tokenValid.message);
+
+        return;
       }
-      setShowNotification({ message: data.message, type: "success" });
+
+      if (rating >= 30) saveRecommendations(movieData.genres);
+
+      setShowNotification({ message, type: "success" });
     } catch (err) {
       setShowNotification({ message: err.message, type: "error" });
     } finally {

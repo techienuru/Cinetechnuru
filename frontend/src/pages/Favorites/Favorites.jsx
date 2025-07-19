@@ -8,6 +8,7 @@ import MaxiPreLoader from "../../components/Preloaders/MaxiPreLoader";
 import MaxiErrorCard from "../../components/ErrorCards/MaxiErrorCard";
 import LoginNotice from "../../components/LoginNotice";
 import EmptyDataNotice from "../../components/EmptyDataNotice";
+import handleApiResponse from "../../util/handleApiResponse";
 
 const Favorites = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,27 +29,18 @@ const Favorites = () => {
           },
         });
 
-        if (res.status >= 400 && res.status !== 403)
-          throw new Error("Bad request. Please reload");
-        if (res.status >= 500) throw new Error("Server Error. Please reload");
+        const { error, isTokenExpired, result } = await res.json();
+        const apiResult = handleApiResponse(res, error, isTokenExpired);
 
-        const data = await res.json();
         // If Access Token has expired
-        if (
-          res.status === 403 &&
-          data?.error &&
-          data?.error === "token has expired."
-        ) {
+        if (apiResult.retry) {
           const tokenValid = await refreshAccessToken();
-          // If Refresh Token is Valid
-          if (tokenValid.isValid) {
-            return fetchData();
-          } else {
-            throw new Error(tokenValid.message);
-          }
+          // If Refresh Token has expired
+          if (!tokenValid.isValid) throw new Error(tokenValid.message);
+          return;
         }
 
-        await fetchDetails(data?.result);
+        await fetchDetails(result);
       } catch (err) {
         setError(err.message);
       } finally {

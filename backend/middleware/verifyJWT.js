@@ -11,7 +11,10 @@ const verifyJWT = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.status(403).json({ error: "token has expired." });
+    if (err)
+      return res
+        .status(403)
+        .json({ error: "token has expired.", isTokenExpired: true });
 
     req.email = decoded.email;
 

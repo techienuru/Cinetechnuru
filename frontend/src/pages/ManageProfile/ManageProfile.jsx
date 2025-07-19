@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { baseUrl } from "../../config";
 import useShowNotification from "../../Hooks/useShowNotification";
 import Notification from "../../components/Notification/Notification";
+import handleApiResponse from "../../util/handleApiResponse";
 
 const ManageProfile = () => {
   const [fullname, setFullname] = useState(null);
@@ -35,31 +36,21 @@ const ManageProfile = () => {
           },
         });
 
-        if (res.status >= 400 && res.status !== 403)
-          throw new Error("Bad request. Please reload");
-        if (res.status >= 500) throw new Error("Server Error. Please reload");
+        const { error, isTokenExpired, foundUser } = await res.json();
+        const apiResult = handleApiResponse(res, error, isTokenExpired);
 
-        const data = await res.json();
         // If Access Token has expired
-        if (
-          res.status === 403 &&
-          data?.error &&
-          data?.error === "token has expired."
-        ) {
+        if (apiResult.retry) {
           const tokenValid = await refreshAccessToken();
-          // If Refresh Token is not Valid
-          if (!tokenValid.isValid) {
-            console.log("I am here");
-
-            throw new Error(tokenValid.message);
-          }
+          // If Refresh Token has expired
+          if (!tokenValid.isValid) throw new Error(tokenValid.message);
 
           return fetchData();
         }
 
-        setFullname(data.foundUser.fullname);
-        setUsername(data.foundUser.username);
-        setEmail(data.foundUser.email);
+        setFullname(foundUser.fullname);
+        setUsername(foundUser.username);
+        setEmail(foundUser.email);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -91,29 +82,20 @@ const ManageProfile = () => {
             newPassword,
           }),
         });
-        const { error, message } = await res.json();
 
-        if (res.status === 401) {
-          const userFriendlyMsg =
-            error === "Previous Password is not correct"
-              ? "Old Password is wrong!"
-              : "Unauthorized access. Please sign in first.";
+        const { error, isTokenExpired, message } = await res.json();
+        const apiResult = handleApiResponse(res, error, isTokenExpired);
 
-          throw new Error(userFriendlyMsg);
-        }
-
-        if (res.status === 403 && error === "token has expired.") {
-          // If Access Token has expired
+        if (apiResult.retry === true) {
+          // If Sever say Access Token has expired
+          // -> Refresh Access Token
           const tokenValid = await refreshAccessToken();
           if (!tokenValid.isValid) {
-            console.log("I am here.");
             throw new Error(tokenValid.message);
           }
           // If Refresh Token is Valid -> Retry Once
           return submitData();
         }
-
-        if (!res.ok) throw new Error("Something went wrong. Please try again.");
 
         setShowNotification({ type: "success", message });
       } catch (err) {

@@ -1,8 +1,6 @@
 import { FaStar } from "react-icons/fa";
 import BackButton from "../../components/Buttons/BackButton";
 import LoadingButton from "../../components/Buttons/LoadingButton";
-import MiniMovieCard from "../../components/MovieCards/MiniMovieCard";
-import styles from "./MovieDetails.module.css";
 import SubmitButton from "../../components/Buttons/SubmitButton/SubmitButton";
 import GradientButton from "../../components/Buttons/GradientButton/GradientButton";
 import Notification from "../../components/Notification/Notification";
@@ -227,23 +225,6 @@ const MovieDetails = () => {
               </div>
             </section>
             {/* End Of Movie Details Inner Section  */}
-
-            {/* <!-- Start Of Movies You might like Section --> */}
-            <section className="suggested-movies-section mb-5">
-              <h3 className="text-center text-xl mb-5">
-                Movies You Might Like
-              </h3>
-              <div
-                className={`${styles.suggestedMoviesFlex} flex flex-row flex-nowrap gap-x-4 overflow-x-scroll py-[10px] px-5`}
-              >
-                <MiniMovieCard></MiniMovieCard>
-                <MiniMovieCard></MiniMovieCard>
-                <MiniMovieCard></MiniMovieCard>
-                <MiniMovieCard></MiniMovieCard>
-                <MiniMovieCard></MiniMovieCard>
-              </div>
-            </section>
-            {/* <!-- End Of Movies You might like Section --> */}
           </main>
         )
       )}

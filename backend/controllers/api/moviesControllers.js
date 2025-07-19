@@ -52,7 +52,12 @@ export const getMovieDetails = async (req, res, next) => {
       tmdbOption
     );
     const moviesObj = await result.json();
-    const trailer = moviesObj.videos.results.find(
+    console.log(
+      `https://api.themoviedb.org/3/movie/${id}?language=en-US&append_to_response=videos`
+    );
+    console.log(moviesObj);
+
+    const trailer = moviesObj?.videos?.results.find(
       (vid) => vid.type === "Trailer"
     );
 
@@ -70,6 +75,26 @@ export const handleSearchMovie = async (req, res, next) => {
   try {
     const result = await fetch(
       `https://api.themoviedb.org/3/search/movie?query=${query}`,
+      tmdbOption
+    );
+
+    const moviesObj = await result.json();
+    res.json({ message: "success", result: moviesObj });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const handleRecommendations = async (req, res, next) => {
+  if (!req?.body?.genres)
+    return res.status(400).json({ error: "Genres must be provided." });
+  const { genres } = req.body;
+
+  try {
+    const splittedGenres = genres.join(",");
+
+    const result = await fetch(
+      `https://api.themoviedb.org/3/discover/movie?page=1&with_genres=${splittedGenres}`,
       tmdbOption
     );
 

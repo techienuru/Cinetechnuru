@@ -15,11 +15,14 @@ const useCollectToken = () => {
       const res = await fetch(`${baseUrl}/refresh/`, {
         credentials: "include",
       });
-      if (res.status >= 400)
+      if (!res.ok || res.status >= 400)
         throw new Error("Session expired. Please Login Again");
 
       const data = await res.json();
+      // Save to localStorage and
+      // Set Access Storage State
       saveAccessToken(data.accessToken);
+      setAccessToken(data.accessToken);
       return {
         isValid: true,
       };
