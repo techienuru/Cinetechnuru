@@ -52,11 +52,6 @@ export const getMovieDetails = async (req, res, next) => {
       tmdbOption
     );
     const moviesObj = await result.json();
-    console.log(
-      `https://api.themoviedb.org/3/movie/${id}?language=en-US&append_to_response=videos`
-    );
-    console.log(moviesObj);
-
     const trailer = moviesObj?.videos?.results.find(
       (vid) => vid.type === "Trailer"
     );
