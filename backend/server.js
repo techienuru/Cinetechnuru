@@ -22,7 +22,7 @@ connectDB();
 // Specifies Allowed URL to communicate to endpoint
 app.use(
   cors({
-    origin: "https://cinetechnuru.vercel.app",
+    origin: ["http://localhost:5173", "https://cinetechnuru.vercel.app"],
     credentials: true,
   })
 );
