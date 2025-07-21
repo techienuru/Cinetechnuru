@@ -37,8 +37,8 @@ export const handleLogin = async (req, res, next) => {
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      secure: false,
-      sameSite: "Lax",
+      secure: true,
+      sameSite: "None",
     }); // In production or when deploying, set "secure:true" && sameSite:"None" Else "secure:false" && sameSite:"Lax"
 
     res.json({ message: "Success", accessToken });

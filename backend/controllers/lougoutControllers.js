@@ -11,7 +11,7 @@ export const handleLogout = async (req, res, next) => {
   const foundUser = await User.findOne({ refreshToken }).exec();
 
   if (!foundUser) {
-    res.clearCookie("jwt", { httpOnly: true });
+    res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     return res.status(403).json({ error: "Invalid token" });
   }
 
